@@ -17,8 +17,7 @@ class UserProfileManager(BaseUserManager):
         """
         if not email:
             raise ValueError('User needs to provide an email address')
-        email = self.normalize_email(email)
-        user = self.model(email=email, name=name)
+        user = self.model(email=self.normalize_email(email), name=name)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -31,7 +30,7 @@ class UserProfileManager(BaseUserManager):
         :param password:
         :return:
         """
-        user = self.create_user(email, name, password)
+        user = self.create_user(email, name=name, password=password)
         user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)
@@ -43,7 +42,7 @@ class UserProfile(AbstractUser, PermissionsMixin):
     """
         Database models for users in the system
     """
-    email = models.EmailField(max_length=255, unique=True)
+    email = models.EmailField(max_length=255)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -53,6 +52,9 @@ class UserProfile(AbstractUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
+    username = None
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['email'], name='unique_email')]
 
     def get_full_name(self):
         """
