@@ -4,4 +4,5 @@ from .models import UserProfile
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ['email', 'name', 'is_active', 'is_staff']
     search_fields = ['email']
