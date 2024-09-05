@@ -5,6 +5,8 @@ from rest_framework.views import APIView
 from .models import UserProfile
 from profiles_api.serializers import HelloSerializer, UserProfileSerializer
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.settings import api_settings
 from .permissions import UpdateOwnProfile
 
 # Create your views here.
@@ -137,3 +139,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (UpdateOwnProfile, )
     filter_backends = (filters.SearchFilter, )
     search_fields = ('name', 'email')
+
+class UserLoginApiView(ObtainAuthToken):
+    """
+    Handle creating user Auth Tokens
+    """
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
