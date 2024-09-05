@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
-
+from django.conf import settings
 
 class UserProfileManager(BaseUserManager):
     """Manager for user profiles"""
@@ -72,3 +72,19 @@ class UserProfile(AbstractUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class UserFeed(models.Model):
+    """
+        Model for users Feed
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='feeds')
+    status_text = models.TextField(max_length=255)
+    created = models.DateField(auto_now_add=True)
+    updated = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ('-created', )
+
+    def __str__(self):
+        return f'Feed: {self.status_text}'
